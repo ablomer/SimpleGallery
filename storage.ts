@@ -4,9 +4,9 @@ import { mediaPath } from "./config";
 const path = require("path");
 const fs = require("fs");
 
-const media: Media[] = [];
-
 const validExts = ["jpg"];
+
+const media: Media[] = [];
 
 fs.readdir(mediaPath, function(err: any, files: any) {
   if (err) {
@@ -27,12 +27,13 @@ fs.readdir(mediaPath, function(err: any, files: any) {
 
       files.forEach(function(file: any) {
         const ext = file.split(".").pop();
+        const path = `${album}/${file}`;
 
         if (!validExts.includes(ext)) {
           return;
         }
 
-        media.push({ path: `${album}/${file}` });
+        media.push({ path: escape(path) });
       });
     });
   });

@@ -1,3 +1,3 @@
-const mediaPath = "C:\\Users\\Augusto\\Downloads\\4K Stogram\\Saved\\";
+const mediaPath = "E:\\Projects\\Photo";
 
 export { mediaPath };
