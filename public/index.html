@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>SimpleGallery</title>
+    <meta name="description" content="A simple media gallery">
+    <meta name="author" content="ablomer">
+
+    <style>
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0 4px;
+        }
+
+        .column {
+            flex: 25%;
+            max-width: 25%;
+        }
+
+        .column img {
+            margin-top: 8px;
+            vertical-align: middle;
+            width: 98%;
+        }
+
+        @media screen and (max-width: 800px) {
+            .column {
+                flex: 50%;
+                max-width: 50%;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            .column {
+                flex: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="row">
+        <div id="column-1" class="column"></div>
+        <div id="column-2" class="column"></div>
+        <div id="column-3" class="column"></div>
+        <div id="column-4" class="column"></div>
+    </div>
+
+    <script src="jquery-3.4.1.min.js"></script>
+
+    <script>
+        const imgPerPage = 30
+
+        var imgCount = 0
+        var page = 0
+
+        function loadMore() {
+            const from = imgPerPage * page
+            const to = imgPerPage * (page + 1)
+
+            $.ajax({
+                url: 'http://localhost:4000/',
+                contentType: "application/json",
+                type: 'POST',
+                data: JSON.stringify({
+                    query: `{ media (filter: { from: ${from}, to: ${to} }) { path } }`
+                }),
+                success: function (result) {
+                    result.data.media.forEach(function (element) {
+                        const path = `media/${element.path}`
+                        const column = (imgCount % 4) + 1
+
+                        $(`#column-${column}`).append(`<img src='${path}' />`)
+
+                        imgCount++
+                    });
+                }
+            })
+
+            page++
+        }
+
+        function isEndOfDocument() {
+            return $(document).height() - $(this).height() == $(this).scrollTop()
+        }
+
+        $(document).ready(function () {
+            loadMore()
+        });
+
+        $(window).scroll(function () {
+            if (isEndOfDocument()) {
+                loadMore()
+            }
+        })
+    </script>
+</body>
+
+</html>
