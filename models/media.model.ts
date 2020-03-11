@@ -1,5 +1,6 @@
 type Media = {
   path: string;
+  album: string;
 };
 
 type MediaFilterInput = {

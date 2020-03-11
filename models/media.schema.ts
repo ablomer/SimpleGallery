@@ -5,6 +5,7 @@ export const mediaTypeDefs = `
   type Media {
     id: ID!
     path: String!
+    album: String!
   }
 
   input MediaFilterInput {

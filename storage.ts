@@ -8,35 +8,31 @@ const validExts = ["jpg"];
 
 const media: Media[] = [];
 
-fs.readdir(mediaPath, function(err: any, files: any) {
-  if (err) {
-    return console.log("Unable to scan directory: " + err);
+fs.readdirSync(mediaPath).forEach(function(album: any) {
+  const albumDir = path.join(mediaPath, album);
+
+  if (!fs.lstatSync(albumDir).isDirectory()) {
+    return;
   }
 
-  files.forEach(function(album: any) {
-    const albumDir = path.join(mediaPath, album);
+  fs.readdirSync(albumDir).forEach(function(file: any) {
+    const ext = file.split(".").pop();
+    const path = `${album}/${file}`;
 
-    if (!fs.lstatSync(albumDir).isDirectory()) {
+    if (!validExts.includes(ext)) {
       return;
     }
 
-    fs.readdir(albumDir, function(err: any, files: any) {
-      if (err) {
-        return console.log("Unable to scan directory: " + err);
-      }
-
-      files.forEach(function(file: any) {
-        const ext = file.split(".").pop();
-        const path = `${album}/${file}`;
-
-        if (!validExts.includes(ext)) {
-          return;
-        }
-
-        media.push({ path: escape(path) });
-      });
-    });
+    media.push({ path: escape(path), album });
   });
 });
+
+media.sort(function(a, b) {
+  return a.path.localeCompare(b.path);
+});
+
+console.log(`Loaded ${media.length} files`);
+
+// TODO: Generate thumbs
 
 export { media };
