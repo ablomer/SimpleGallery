@@ -35,7 +35,20 @@
             left: 0;
             right: 0;
             bottom: 0;
-            height: 80%;
+        }
+
+        @media (orientation: landscape) {
+            #viewer img {
+                width: auto;
+                height: 80%;
+            }
+        }
+
+        @media (orientation: portrait) {
+            #viewer img {
+                width: 80%;
+                height: auto;
+            }
         }
 
         .row {
@@ -74,8 +87,8 @@
 
 <body>
 
-    <div id="viewer">
-        <img />
+    <div id="viewer" onclick="closeViewer()">
+        <img>
     </div>
 
     <script src="jquery-3.4.1.min.js"></script>
@@ -111,7 +124,7 @@
                         const path = `media/${element.path}`
                         const column = (imgCount % 4) + 1
 
-                        $(`div[id="${albumId}"] #column-${column}`).append(`<img src="${path}" onclick="view('${path}')" />`)
+                        $(`div[id="${albumId}"] #column-${column}`).append(`<img src="${path}" onclick="openViewer('${path}')">`)
 
                         imgCount++
                     });
@@ -140,9 +153,13 @@
             return $(document).height() - $(this).height() == $(this).scrollTop()
         }
 
-        function view(path) {
+        function openViewer(path) {
             $(`#viewer`).show()
             $(`#viewer img`).attr("src", path)
+        }
+
+        function closeViewer() {
+            $(`#viewer`).hide()
         }
 
         $(document).ready(function () {
