@@ -18,6 +18,26 @@
             font-family: sans-serif;
         }
 
+        #viewer {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.9);
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+        }
+
+        #viewer img {
+            position: absolute;
+            margin: auto;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 80%;
+        }
+
         .row {
             display: flex;
             flex-wrap: wrap;
@@ -54,17 +74,21 @@
 
 <body>
 
+    <div id="viewer">
+        <img />
+    </div>
+
     <script src="jquery-3.4.1.min.js"></script>
 
     <script>
-        const imgPerPage = 30
+        const imgsPerPage = 30
         var currentAlbum = null
         var imgCount = 0
         var page = 0
 
         function loadMore() {
-            const from = imgPerPage * page
-            const to = imgPerPage * (page + 1)
+            const from = imgsPerPage * page
+            const to = imgsPerPage * (page + 1)
 
             $.ajax({
                 url: 'http://localhost:4000/',
@@ -87,7 +111,7 @@
                         const path = `media/${element.path}`
                         const column = (imgCount % 4) + 1
 
-                        $(`div[id="${albumId}"] #column-${column}`).append(`<img src="${path}" />`)
+                        $(`div[id="${albumId}"] #column-${column}`).append(`<img src="${path}" onclick="view('${path}')" />`)
 
                         imgCount++
                     });
@@ -114,6 +138,11 @@
 
         function isEndOfDocument() {
             return $(document).height() - $(this).height() == $(this).scrollTop()
+        }
+
+        function view(path) {
+            $(`#viewer`).show()
+            $(`#viewer img`).attr("src", path)
         }
 
         $(document).ready(function () {
