@@ -18,6 +18,6 @@
     "graphql": "^14.6.0",
     "graphql-tools": "^4.0.7",
     "lodash": "^4.17.15",
-    "mongoose": "^5.9.4"
+    "sqlite3": "^4.1.1"
   }
 }

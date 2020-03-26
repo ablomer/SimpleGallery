@@ -82,6 +82,14 @@
                 max-width: 100%;
             }
         }
+
+        .tags {
+            margin-bottom: 1em;
+        }
+
+        .tags span {
+            margin-right: 1em;
+        }
     </style>
 </head>
 
@@ -108,17 +116,17 @@
                 contentType: "application/json",
                 type: 'POST',
                 data: JSON.stringify({
-                    query: `{ media (filter: { from: ${from}, to: ${to} }) { path, album } }`
+                    query: `{ media (filter: { from: ${from}, to: ${to} }) { path, album { name, tags } } }`
                 }),
                 success: function (result) {
                     result.data.media.forEach(function (element) {
-                        const album = element.album
-                        const albumId = `album-${album}`
+                        const albumName = element.album.name
+                        const albumId = `album-${albumName}`
 
-                        if (album != currentAlbum) {
-                            currentAlbum = album
+                        if (albumName != currentAlbum) {
+                            currentAlbum = albumName
                             imgCount = 0
-                            addAlbum(albumId, album)
+                            addAlbum(albumId, albumName, element.album.tags)
                         }
 
                         const path = `media/${element.path}`
@@ -134,19 +142,55 @@
             page++
         }
 
-        function addAlbum(id, name) {
+        function addAlbum(id, name, tags) {
+            var tagsHtml = ""
+
+            tags.forEach(function (tag) {
+                tagsHtml += `<span>${tag}</span>`
+            });
+
             $("body").append(`
-            <div id="${id}">
-                <h1>${name}</h1>
-                <div class="row">
-                    <div id="column-1" class="column"></div>
-                    <div id="column-2" class="column"></div>
-                    <div id="column-3" class="column"></div>
-                    <div id="column-4" class="column"></div>
+                <div id="${id}">
+                    <h1>${name}</h1>
+                    <div class="tags">
+                        ${tagsHtml}
+                        <input type="text" onkeydown="assignTag(this)">
+                    </div>
+                    <div class="row">
+                        <div id="column-1" class="column"></div>
+                        <div id="column-2" class="column"></div>
+                        <div id="column-3" class="column"></div>
+                        <div id="column-4" class="column"></div>
+                    </div>
+                    <hr>
                 </div>
-                <hr>
-            </div>
             `)
+        }
+
+        function assignTag(element) {
+            let parent = $(element).parent().parent()
+            let tag = $(element).val();
+            let album = parent.find("h1").text();
+
+            if (event.key !== 'Enter' || tag.length == 0 || album.length == 0) {
+                return;
+            }
+
+            $(element).prop("disabled", true);
+
+            $.ajax({
+                url: 'http://localhost:4000/',
+                contentType: "application/json",
+                type: 'POST',
+                data: JSON.stringify({
+                    query: `mutation { assignTag(album: "${album}", tag: "${tag}") }`
+                }),
+                success: function (result) {
+                    parent.find(".tags input").before(`<span>${tag}</span>`)
+                    $(element).val("");
+                    $(element).prop("disabled", false);
+                }
+            })
         }
 
         function isEndOfDocument() {

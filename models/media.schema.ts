@@ -3,9 +3,8 @@ import { media } from "../storage";
 
 export const mediaTypeDefs = `
   type Media {
-    id: ID!
     path: String!
-    album: String!
+    album: Album!
   }
 
   input MediaFilterInput {
@@ -13,14 +12,14 @@ export const mediaTypeDefs = `
     to: Int
   }
   
-  type Query {
+  extend type Query {
     media(filter: MediaFilterInput): [Media]
   }
 `;
 
 export const mediaResolvers = {
   Query: {
-    async media(_: any, { filter = {} }) {
+    media(_: any, { filter = {} }) {
       const f = filter as MediaFilterInput;
       const m = media as Media[];
 

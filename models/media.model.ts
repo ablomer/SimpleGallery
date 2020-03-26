@@ -1,6 +1,8 @@
+import { Album } from "./album.model";
+
 type Media = {
   path: string;
-  album: string;
+  album: Album;
 };
 
 type MediaFilterInput = {

@@ -1,15 +1,17 @@
 import { ApolloServer } from "apollo-server";
 import { makeExecutableSchema } from "graphql-tools";
 import { merge } from "lodash";
+import rootTypeDefs from "../models/root";
 import { mediaResolvers, mediaTypeDefs } from "../models/media.schema";
+import { albumResolvers, albumTypeDefs } from "../models/album.schema";
 
 /**
  * Declare the schema which the will hold our
  * GraphQL types and resolvers.
  */
 const schema = makeExecutableSchema({
-  typeDefs: [mediaTypeDefs],
-  resolvers: merge(mediaResolvers)
+  typeDefs: [rootTypeDefs, albumTypeDefs, mediaTypeDefs],
+  resolvers: merge(albumResolvers, mediaResolvers)
 });
 
 /**
