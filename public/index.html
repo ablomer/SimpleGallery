@@ -146,7 +146,7 @@
             var tagsHtml = ""
 
             tags.forEach(function (tag) {
-                tagsHtml += `<span>${tag}</span>`
+                tagsHtml += `<span id="${tag}" onclick="unassignTag(this)">${tag}</span>`
             });
 
             $("body").append(`
@@ -189,6 +189,28 @@
                     parent.find(".tags input").before(`<span>${tag}</span>`)
                     $(element).val("");
                     $(element).prop("disabled", false);
+                }
+            })
+        }
+
+        function unassignTag(element) {
+            let parent = $(element).parent().parent()
+            let tag = $(element).text();
+            let album = parent.find("h1").text();
+
+            if (tag.length == 0 || album.length == 0) {
+                return;
+            }
+
+            $.ajax({
+                url: 'http://localhost:4000/',
+                contentType: "application/json",
+                type: 'POST',
+                data: JSON.stringify({
+                    query: `mutation { unassignTag(album: "${album}", tag: "${tag}") }`
+                }),
+                success: function (result) {
+                    parent.find(`.tags #${tag}`).remove()
                 }
             })
         }

@@ -9,6 +9,7 @@ export const albumTypeDefs = `
   
   extend type Mutation {
     assignTag(album: String, tag: String): String
+    unassignTag(album: String, tag: String): String
   }
 `;
 
@@ -30,7 +31,7 @@ export const albumResolvers = {
 
   Mutation: {
     assignTag(_: any, { album = "", tag = "" }) {
-      const promise = new Promise(function(resolve, reject) {
+      return new Promise(function(resolve, reject) {
         db.run(`INSERT OR IGNORE INTO "albumTags" ("album", "tag") VALUES (?, ?)`, [album, tag], function(error: any) {
           if (error) {
             reject(error);
@@ -39,8 +40,18 @@ export const albumResolvers = {
           }
         });
       });
+    },
 
-      return promise;
+    unassignTag(_: any, { album = "", tag = "" }) {
+      return new Promise(function(resolve, reject) {
+        db.run(`DELETE FROM "albumTags" WHERE album = ? AND tag = ?`, [album, tag], function(error: any) {
+          if (error) {
+            reject(error);
+          } else {
+            resolve("success");
+          }
+        });
+      });
     }
   }
 };
