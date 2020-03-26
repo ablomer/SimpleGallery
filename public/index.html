@@ -121,6 +121,8 @@
     <script src="jquery-3.4.1.min.js"></script>
 
     <script>
+        const serverUrl = "http://localhost:4000/"
+
         const imgsPerPage = 30
         var currentAlbum = null
         var imgCount = 0
@@ -131,7 +133,7 @@
             const to = imgsPerPage * (page + 1)
 
             $.ajax({
-                url: 'http://localhost:4000/',
+                url: serverUrl,
                 contentType: "application/json",
                 type: 'POST',
                 data: JSON.stringify({
@@ -198,7 +200,7 @@
             $(element).prop("disabled", true);
 
             $.ajax({
-                url: 'http://localhost:4000/',
+                url: serverUrl,
                 contentType: "application/json",
                 type: 'POST',
                 data: JSON.stringify({
@@ -222,7 +224,7 @@
             }
 
             $.ajax({
-                url: 'http://localhost:4000/',
+                url: serverUrl,
                 contentType: "application/json",
                 type: 'POST',
                 data: JSON.stringify({
